@@ -1,0 +1,22 @@
+{
+  "spec": "MMP-AIR",
+  "version": "0.1",
+  "declaration": {
+    "used": false,
+    "summary_zh": "",
+    "summary_en": ""
+  },
+  "submission": {
+    "contest": "CUMCM",
+    "year": 2027,
+    "problem": "A",
+    "team_ref": "2027000000",
+    "paper_title": ""
+  },
+  "tools": [],
+  "records": [],
+  "integrity": {
+    "created_at": "2027-09-08T20:00:00+08:00",
+    "generator": { "name": "CMAMSys", "version": "0.1.0" }
+  }
+}

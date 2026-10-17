@@ -1,0 +1,107 @@
+{
+  "spec": "MMP-AIR",
+  "version": "0.1",
+  "declaration": {
+    "used": true,
+    "summary_zh": "主要用于语言润色、代码调试与部分公式排版",
+    "summary_en": "Used mainly for language polishing, code debugging, and formula typesetting."
+  },
+  "submission": {
+    "contest": "CUMCM",
+    "year": 2027,
+    "problem": "A",
+    "team_ref": "2027000000",
+    "paper_title": "基于 SEIR 模型的传染病传播预测"
+  },
+
+  "tools": [
+    {
+      "id": "t1",
+      "name": "DeepSeek",
+      "model": "DeepSeek-R1",
+      "version": "0528",
+      "vendor": "深度求索（DeepSeek）",
+      "access_date": "2027-09-05",
+      "category": "llm"
+    },
+    {
+      "id": "t2",
+      "name": "GitHub Copilot",
+      "model": "Copilot",
+      "version": "2027-08",
+      "vendor": "GitHub",
+      "access_date": "2027-09-06",
+      "category": "code-assistant"
+    }
+  ],
+
+  "records": [
+    {
+      "id": "r1",
+      "tool_refs": ["t1"],
+      "purpose": "modeling",
+      "stage": "问题一：SEIR 模型构建",
+      "purpose_detail_zh": "就参数估计方法的选择征询意见，用于确定接触率的拟合方式",
+      "prompt_approach_zh": "分两轮：先让其给出三种可选的参数估计思路，再针对选定的最小二乘法要求给出误差检验方式",
+      "interactions": [
+        {
+          "role": "user",
+          "content": "已有 30 天的感染人数数据，要在 SEIR 模型里估计接触率，有哪些可行做法？",
+          "ts": "2027-09-06T10:12:00+08:00"
+        },
+        {
+          "role": "assistant",
+          "content": "可考虑最小二乘拟合、极大似然估计、以及基于 MCMC 的贝叶斯估计三种……",
+          "ts": "2027-09-06T10:13:00+08:00"
+        },
+        {
+          "role": "note",
+          "content": "首版建议直接采用极大似然，但样本量偏小，最终改为最小二乘"
+        }
+      ],
+      "outcome": {
+        "adopted": "modified",
+        "modification_zh": "未采用其推荐的极大似然估计；改写为带正则项的最小二乘，并自行推导了梯度",
+        "verification": {
+          "method_zh": "用已知参数生成模拟数据回代，检验恢复误差小于 3%",
+          "verified": true,
+          "verifier_role": "编程手"
+        }
+      }
+    },
+    {
+      "id": "r2",
+      "tool_refs": ["t2"],
+      "purpose": "debugging",
+      "stage": "问题二：灵敏度分析代码",
+      "purpose_detail_zh": "定位常微分方程数值求解中出现的振荡",
+      "prompt_approach_zh": "把报错信息与可疑代码段一并贴出，直接询问可能原因",
+      "outcome": {
+        "adopted": "modified",
+        "modification_zh": "提示的刚性问题判断正确，但给出的求解器参数不适用，改用了 RK45 并自行调整步长上限",
+        "verification": {
+          "method_zh": "与解析解对比，逐步缩短步长确认结果收敛",
+          "verified": true,
+          "verifier_role": "编程手"
+        }
+      }
+    },
+    {
+      "id": "r3",
+      "tool_refs": ["t1"],
+      "purpose": "polishing",
+      "stage": "全文",
+      "purpose_detail_zh": "英文摘要的语言润色与术语统一",
+      "prompt_approach_zh": "逐段提交，要求只改语法与表达，不改动任何数值与结论",
+      "outcome": {
+        "adopted": "modified",
+        "modification_zh": "接受大部分措辞修改，恢复了三处被改动的术语"
+      }
+    }
+  ],
+
+  "integrity": {
+    "created_at": "2027-09-08T20:00:00+08:00",
+    "generator": { "name": "CMAMSys", "version": "0.1.0" }
+  }
+}

@@ -1,0 +1,143 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/Yogdunana/CMAMSys/blob/main/spec/schema/mmp-air-v0.1.json",
+  "title": "MMP-AIR v0.1",
+  "description": "MathModel Project - AI Usage Record: a minimal, machine-readable format for disclosing AI tool usage in mathematical modeling contests.",
+  "type": "object",
+  "required": ["spec", "version", "declaration"],
+  "properties": {
+    "spec": { "const": "MMP-AIR" },
+    "version": { "const": "0.1" },
+
+    "declaration": {
+      "type": "object",
+      "required": ["used"],
+      "properties": {
+        "used": { "type": "boolean" },
+        "summary_zh": { "type": "string", "description": "主要用途的简要说明（中文）" },
+        "summary_en": { "type": "string" }
+      }
+    },
+
+    "submission": {
+      "type": "object",
+      "properties": {
+        "contest": { "type": "string" },
+        "year": { "type": "integer" },
+        "problem": { "type": "string" },
+        "team_ref": { "type": "string" },
+        "paper_title": { "type": "string" }
+      }
+    },
+
+    "tools": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "model"],
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "model": { "type": "string" },
+          "version": { "type": "string" },
+          "vendor": { "type": "string" },
+          "access_date": { "type": "string" },
+          "category": {
+            "type": "string",
+            "enum": ["llm", "code-assistant", "math-software", "agent", "other"]
+          }
+        }
+      }
+    },
+
+    "records": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "tool_refs", "purpose", "stage", "purpose_detail_zh", "prompt_approach_zh", "outcome"],
+        "properties": {
+          "id": { "type": "string" },
+          "tool_refs": { "type": "array", "items": { "type": "string" } },
+          "purpose": {
+            "type": "string",
+            "enum": [
+              "literature", "ideation", "modeling", "data", "coding",
+              "debugging", "visualization", "writing", "polishing",
+              "translation", "review"
+            ]
+          },
+          "stage": { "type": "string", "description": "使用环节" },
+          "purpose_detail_zh": { "type": "string" },
+          "prompt_approach_zh": { "type": "string" },
+          "interactions": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["role", "content"],
+              "properties": {
+                "role": { "type": "string", "enum": ["user", "assistant", "note"] },
+                "content": { "type": "string" },
+                "ts": { "type": "string" }
+              }
+            }
+          },
+          "outcome": {
+            "type": "object",
+            "required": ["adopted"],
+            "properties": {
+              "adopted": { "type": "string", "enum": ["full", "modified", "none"] },
+              "modification_zh": { "type": "string" },
+              "verification": {
+                "type": "object",
+                "required": ["verified"],
+                "properties": {
+                  "method_zh": { "type": "string" },
+                  "verified": { "type": "boolean" },
+                  "verifier_role": { "type": "string" }
+                }
+              }
+            },
+            "allOf": [
+              {
+                "if": { "properties": { "adopted": { "const": "modified" } }, "required": ["adopted"] },
+                "then": { "required": ["modification_zh"] }
+              }
+            ]
+          }
+        }
+      }
+    },
+
+    "integrity": {
+      "type": "object",
+      "properties": {
+        "created_at": { "type": "string" },
+        "generator": {
+          "type": "object",
+          "properties": {
+            "name": { "type": "string" },
+            "version": { "type": "string" }
+          }
+        },
+        "hash": { "type": "string" },
+        "prev_hash": { "type": "string" }
+      }
+    }
+  },
+
+  "allOf": [
+    {
+      "if": {
+        "properties": { "declaration": { "properties": { "used": { "const": true } }, "required": ["used"] } },
+        "required": ["declaration"]
+      },
+      "then": {
+        "required": ["tools", "records"],
+        "properties": {
+          "tools": { "minItems": 1 },
+          "records": { "minItems": 1 }
+        }
+      }
+    }
+  ]
+}
